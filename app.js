@@ -14,8 +14,14 @@ const $ = id => document.getElementById(id);
 const letters=["A","B","C","D"];
 let studentName="", studentId="", current=0, correct=0, bonus=0, timerInterval=null, remaining=10, questionStarted=0, locked=false;
 let answersLog=[];
-function show(section){["welcome","quiz","result","ranking"].forEach(id=>$(id).classList.toggle("hidden",id!==section));}
-function makeId(){return (crypto.randomUUID?crypto.randomUUID():("id-"+Date.now()+"-"+Math.random().toString(16).slice(2)));}
+function show(section) {
+  ["welcome", "quiz", "result", "ranking"].forEach(id => {
+    const element = $(id);
+    if (element) {
+      element.classList.toggle("hidden", id !== section);
+    }
+  });
+}function makeId(){return (crypto.randomUUID?crypto.randomUUID():("id-"+Date.now()+"-"+Math.random().toString(16).slice(2)));}
 $("start-form").addEventListener("submit",e=>{
  e.preventDefault(); studentName=$("student-name").value.trim(); if(!studentName)return;
  studentId=localStorage.getItem("quizStudentId")||makeId(); localStorage.setItem("quizStudentId",studentId);
@@ -57,4 +63,8 @@ function finish(){
  $("final-score").textContent=`${correct+bonus}/20`;$("correct-score").textContent=`${correct}/10`;$("bonus-score").textContent=`+${bonus}`;
  $("result-message").textContent=bonus?`Bravo ! Tu as obtenu ${bonus} point(s) bonus grâce à ta rapidité.`:"Merci pour ta participation ! Continue à t'entraîner pour décrocher les points bonus.";
 }
-$("back-home").addEventListener("click",()=>show("welcome"));
+const backHomeButton = $("back-home");
+
+if (backHomeButton) {
+  backHomeButton.addEventListener("click", () => show("welcome"));
+}
