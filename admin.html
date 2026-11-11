@@ -4,9 +4,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administration - Quiz</title>
+  <meta name="theme-color" content="#F5F5EF">
+  <title>Administration | QuizRoom</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --bg: #F5F5EF;
+      --white: #FFFFFF;
+      --text: #293A35;
+      --muted: #78877D;
+      --line: #E1E8DE;
+      --green: #52796F;
+      --sage: #E4EBDD;
+      --red: #C87979;
+    }
+
     * {
       box-sizing: border-box;
     }
@@ -14,101 +30,306 @@
     body {
       margin: 0;
       min-height: 100vh;
-      padding: 30px 16px;
-      font-family: Arial, sans-serif;
-      background: #101827;
-      color: white;
+      padding: 30px 18px;
+      font-family: "DM Sans", sans-serif;
+      background:
+        radial-gradient(ellipse at 50% -15%, #E4EBDD 0, transparent 55%),
+        var(--bg);
+      color: var(--text);
     }
 
     .container {
-      max-width: 950px;
-      margin: 40px auto;
+      max-width: 1050px;
+      margin: 25px auto;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font: 800 17px Manrope, sans-serif;
+      letter-spacing: 1px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #52796F, #789B8B);
+      color: white;
+      box-shadow: 0 5px 14px #52796F25;
+    }
+
+    .brand span:last-child {
+      color: var(--green);
+    }
+
+    .admin-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      background: var(--sage);
+      border-radius: 30px;
+      padding: 9px 14px;
     }
 
     .panel {
-      background: #1c293b;
-      border: 1px solid #34445a;
-      border-radius: 16px;
-      padding: 28px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: clamp(23px, 4vw, 38px);
+      box-shadow: 0 14px 40px rgba(41,58,53,.06);
+    }
+
+    #login-panel {
+      max-width: 470px;
+      margin: 65px auto;
+    }
+
+    .icon-box {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 15px;
+      background: var(--sage);
+      color: var(--green);
+      font-size: 23px;
+      margin-bottom: 23px;
     }
 
     h1 {
-      margin-top: 0;
+      font: 800 clamp(25px, 4vw, 34px) Manrope, sans-serif;
+      letter-spacing: -1px;
+      margin: 0 0 10px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 25px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 9px;
     }
 
     input {
       width: 100%;
-      padding: 14px;
-      margin: 15px 0;
-      border: 1px solid #53647b;
-      border-radius: 8px;
-      background: #101827;
-      color: white;
+      height: 51px;
+      padding: 0 15px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #FAFBF8;
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: .2s;
+    }
+
+    input:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px #52796F18;
+      background: white;
     }
 
     button {
-      padding: 12px 18px;
+      min-height: 47px;
+      padding: 0 20px;
       border: 0;
-      border-radius: 8px;
-      background: #16b8c8;
-      color: #07131c;
-      font-weight: bold;
+      border-radius: 11px;
+      background: linear-gradient(100deg, #52796F, #789B8B);
+      color: white;
+      font: 700 13px "DM Sans", sans-serif;
       cursor: pointer;
+      transition: .2s;
     }
 
     button:hover {
-      opacity: .85;
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    #login-form button {
+      width: 100%;
+      margin-top: 14px;
     }
 
     .logout {
-      background: #e45c68;
-      color: white;
       float: right;
+      background: #F8EEEE;
+      color: #B76C6C;
+      border: 1px solid #F0DCDC;
     }
 
     .message {
-      color: #ff8991;
+      color: var(--red);
+      font-size: 12px;
       margin-top: 12px;
     }
 
     .hidden {
-      display: none;
+      display: none !important;
+    }
+
+    .dashboard-heading {
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .dashboard-heading h1 {
+      margin-top: 5px;
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.8px;
+    }
+
+    .dashboard-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #6DAD82;
+    }
+
+    .results-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 35px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .results-title h2 {
+      font: 700 17px Manrope, sans-serif;
+      margin: 0;
+    }
+
+    .results-title span {
+      color: var(--muted);
+      font-size: 11px;
     }
 
     .table-wrapper {
       overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      margin-top: 18px;
     }
 
     table {
       width: 100%;
-      margin-top: 25px;
       border-collapse: collapse;
-      min-width: 550px;
+      min-width: 580px;
     }
 
     th, td {
-      padding: 15px 12px;
+      padding: 16px 15px;
       text-align: left;
-      border-bottom: 1px solid #34445a;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
     }
 
     th {
-      color: #60dce5;
+      color: var(--muted);
+      background: #F7F8F4;
+      font-size: 10px;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    td {
+      color: var(--text);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    tbody tr:hover {
+      background: #F8FAF6;
     }
 
     .score {
-      color: #60dce5;
-      font-weight: bold;
+      color: var(--green);
+      font-weight: 800;
     }
 
     .empty {
-      color: #aeb9c9;
-      margin-top: 25px;
+      color: var(--muted);
+      text-align: center;
+      padding: 30px 15px;
+      font-size: 13px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #929D92;
+      font-size: 10px;
+      letter-spacing: 1.2px;
+      margin-top: 30px;
     }
 
     @media(max-width: 600px) {
+      body {
+        padding: 16px 12px;
+      }
+
+      .container {
+        margin: 10px auto;
+      }
+
+      .header {
+        margin-bottom: 18px;
+      }
+
       .panel {
-        padding: 18px;
+        padding: 21px 17px;
+        border-radius: 16px;
+      }
+
+      #login-panel {
+        margin: 45px auto;
+      }
+
+      .admin-label {
+        font-size: 9px;
+        padding: 8px 10px;
+      }
+
+      .results-title {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
   </style>
@@ -117,34 +338,67 @@
 <body>
   <div class="container">
 
+    <header class="header">
+      <div class="brand">
+        <div class="brand-mark">Q</div>
+        <div>QUIZ<span>ROOM</span></div>
+      </div>
+      <div class="admin-label">ESPACE ADMINISTRATEUR</div>
+    </header>
+
     <section id="login-panel" class="panel">
-      <h1>Administration</h1>
-      <p>Connecte-toi pour consulter les résultats des étudiants.</p>
+      <div class="icon-box">⌑</div>
+      <div class="eyebrow">ACCÈS SÉCURISÉ</div>
+      <h1>Bienvenue !</h1>
+      <p class="subtitle">
+        Connecte-toi à ton espace administrateur pour consulter
+        les résultats et le classement des étudiants.
+      </p>
 
       <form id="login-form">
+        <label class="field-label" for="password">
+          Mot de passe administrateur
+        </label>
         <input
           type="password"
           id="password"
-          placeholder="Mot de passe administrateur"
+          placeholder="Saisir ton mot de passe"
           required
         >
-        <button type="submit">Se connecter</button>
+        <button type="submit">Se connecter →</button>
       </form>
 
       <p id="login-message" class="message"></p>
     </section>
 
     <section id="dashboard" class="panel hidden">
-      <button id="logout" class="logout">Déconnexion</button>
+      <button id="logout" class="logout">Déconnexion ↗</button>
 
-      <h1>Tableau de bord</h1>
-      <p>Classement général des participants</p>
+      <div class="dashboard-heading">
+        <div class="eyebrow">VUE D'ENSEMBLE</div>
+        <h1>Tableau de bord</h1>
+        <p class="subtitle">
+          Consulte les performances et le classement général des participants.
+        </p>
+        <div class="dashboard-info">
+          <span class="status-dot"></span>
+          Résultats du quiz
+        </div>
+      </div>
+
+      <div class="results-title">
+        <h2>Classement des étudiants</h2>
+        <span>Notes sur 20</span>
+      </div>
 
       <div id="results">
         <p class="empty">Chargement des résultats...</p>
       </div>
     </section>
 
+    <div class="footer">
+      QUIZROOM · COMMUNICATION ORGANISATIONNELLE
+    </div>
   </div>
 
   <script>
@@ -285,10 +539,7 @@
       showLogin();
     });
 
-    // Vérifier si une session existe déjà
-    loadResults().then(() => {
-      // Si la session est valide, loadResults affiche les résultats.
-    });
+    loadResults();
   </script>
 </body>
 </html>
