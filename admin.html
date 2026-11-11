@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration - Quiz</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 16px;
+      font-family: Arial, sans-serif;
+      background: #101827;
+      color: white;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 40px auto;
+    }
+
+    .panel {
+      background: #1c293b;
+      border: 1px solid #34445a;
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 15px 0;
+      border: 1px solid #53647b;
+      border-radius: 8px;
+      background: #101827;
+      color: white;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 8px;
+      background: #16b8c8;
+      color: #07131c;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: .85;
+    }
+
+    .logout {
+      background: #e45c68;
+      color: white;
+      float: right;
+    }
+
+    .message {
+      color: #ff8991;
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 25px;
+      border-collapse: collapse;
+      min-width: 550px;
+    }
+
+    th, td {
+      padding: 15px 12px;
+      text-align: left;
+      border-bottom: 1px solid #34445a;
+    }
+
+    th {
+      color: #60dce5;
+    }
+
+    .score {
+      color: #60dce5;
+      font-weight: bold;
+    }
+
+    .empty {
+      color: #aeb9c9;
+      margin-top: 25px;
+    }
+
+    @media(max-width: 600px) {
+      .panel {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <section id="login-panel" class="panel">
+      <h1>Administration</h1>
+      <p>Connecte-toi pour consulter les résultats des étudiants.</p>
+
+      <form id="login-form">
+        <input
+          type="password"
+          id="password"
+          placeholder="Mot de passe administrateur"
+          required
+        >
+        <button type="submit">Se connecter</button>
+      </form>
+
+      <p id="login-message" class="message"></p>
+    </section>
+
+    <section id="dashboard" class="panel hidden">
+      <button id="logout" class="logout">Déconnexion</button>
+
+      <h1>Tableau de bord</h1>
+      <p>Classement général des participants</p>
+
+      <div id="results">
+        <p class="empty">Chargement des résultats...</p>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const loginPanel = document.getElementById("login-panel");
+    const dashboard = document.getElementById("dashboard");
+    const loginForm = document.getElementById("login-form");
+    const loginMessage = document.getElementById("login-message");
+    const results = document.getElementById("results");
+
+    function showDashboard() {
+      loginPanel.classList.add("hidden");
+      dashboard.classList.remove("hidden");
+    }
+
+    function showLogin() {
+      dashboard.classList.add("hidden");
+      loginPanel.classList.remove("hidden");
+    }
+
+    async function loadResults() {
+      results.innerHTML = "<p class='empty'>Chargement...</p>";
+
+      try {
+        const response = await fetch("/api/leaderboard", {
+          credentials: "same-origin"
+        });
+
+        if (response.status === 401) {
+          showLogin();
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error("Erreur de chargement");
+        }
+
+        const data = await response.json();
+
+        if (!data.length) {
+          results.innerHTML =
+            "<p class='empty'>Aucun résultat pour le moment.</p>";
+          return;
+        }
+
+        const table = document.createElement("table");
+
+        const thead = document.createElement("thead");
+        thead.innerHTML = `
+          <tr>
+            <th>Rang</th>
+            <th>Étudiant</th>
+            <th>Bonnes réponses</th>
+            <th>Bonus</th>
+            <th>Note /20</th>
+          </tr>
+        `;
+
+        const tbody = document.createElement("tbody");
+
+        data.forEach((student, index) => {
+          const tr = document.createElement("tr");
+
+          const values = [
+            index + 1,
+            student.student_name,
+            student.correct_count,
+            student.bonus_count,
+            student.total_score + "/20"
+          ];
+
+          values.forEach((value, columnIndex) => {
+            const td = document.createElement("td");
+            td.textContent = value;
+
+            if (columnIndex === 4) {
+              td.className = "score";
+            }
+
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+
+        results.innerHTML = "";
+        const wrapper = document.createElement("div");
+        wrapper.className = "table-wrapper";
+        wrapper.appendChild(table);
+        results.appendChild(wrapper);
+
+      } catch (error) {
+        results.innerHTML =
+          "<p class='message'>Impossible de charger les résultats.</p>";
+      }
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      loginMessage.textContent = "";
+
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch("/api/admin-login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "same-origin",
+          body: JSON.stringify({ password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Connexion impossible.");
+        }
+
+        document.getElementById("password").value = "";
+        showDashboard();
+        await loadResults();
+
+      } catch (error) {
+        loginMessage.textContent = error.message;
+      }
+    });
+
+    document.getElementById("logout").addEventListener("click", async () => {
+      await fetch("/api/admin-logout", {
+        method: "POST",
+        credentials: "same-origin"
+      });
+
+      showLogin();
+    });
+
+    // Vérifier si une session existe déjà
+    loadResults().then(() => {
+      // Si la session est valide, loadResults affiche les résultats.
+    });
+  </script>
+</body>
+</html>
