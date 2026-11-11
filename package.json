@@ -2,7 +2,7 @@
   "name": "quiz-communication-organisationnelle",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "scripts": {},
   "dependencies": {
     "@upstash/redis": "^1.35.3"
