@@ -23,5 +23,10 @@ module.exports = async (req,res) => {
   if(!response.ok)throw new Error(data.message||"Erreur base de données");
   const row=Array.isArray(data)?data[0]:data;
   return res.status(200).json({correct,bonusAwarded:!!row?.bonus_awarded,explanation:correct?"":item.explanation});
- }catch(error){return res.status(500).json({error:"Impossible d'enregistrer la réponse."});}
+}catch(error){
+  console.error("Supabase answer error:", error);
+  return res.status(500).json({
+    error: error.message || "Impossible d'enregistrer la réponse."
+  });
+}
 };
